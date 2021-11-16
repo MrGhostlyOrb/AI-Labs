@@ -1,67 +1,51 @@
-def is_goal(state):
-    # [y, x, [[0, 1, 2], [3, 4, 5], [6, 7, 8]]]
-    if state == [2, 0, [[4, 2, 6], [7, 1, 8], [0, 5, 3]]]:
-        return True
-    else:
-        return False
+# Starting state
+import itertools
+import time
+import iddfs
 
 
-def get_path(state, predecessor):
-    path = []
-    while state is not None:
-        path = [state] + path
-        state = predecessor[state]
-    return path
+def part_1():
+    start_states = [
+        # 19 Moves
+        # 2.77s
+        [0, 0, [[0, 7, 1], [4, 3, 2], [8, 6, 5]]],
 
+        # 23 moves
+        # 27.20s
+        [0, 2, [[5, 6, 0], [1, 3, 8], [4, 7, 2]]],
 
-def dfs_path_rec(path):
-    if is_goal(path[-1]):
-        yield path
-    else:
-        for next_state in move(path[-1]):
-            if next_state not in path:
-                next_path = path + [next_state]
-                yield from dfs_path_rec(next_path)
+        #
+        [2, 0, [[3, 5, 6], [1, 2, 7], [0, 8, 4]]],
+        [1, 1, [[7, 3, 5], [4, 0, 2], [8, 1, 6]]],
+        [2, 0, [[6, 4, 8], [7, 1, 3], [0, 2, 5]]],
+    ]
+    goal_state = [0, 2, [[3, 2, 0], [6, 1, 8], [4, 7, 5]]]
+    times = []
+    sol_length = []
+    # Path = list of states[state, state]
 
+    for state in start_states:
+        iddfs.goal_state = goal_state
 
-def move_blank(i, j, n):
-    if i + 1 < n:
-        yield i + 1, j
-    if i - 1 >= 0:
-        yield i - 1, j
-    if j + 1 < n:
-        yield i, j + 1
-    if j - 1 >= 0:
-        yield i, j - 1
+        start = time.time()
 
+        for depth_limit in itertools.count():
+            solution = iddfs.dfs_rec([state], depth_limit)
+            if solution is not None:
+                sol_length.append(len(solution))
+                print("Number of moves : " + str(len(solution)))
+                break
 
-def move(state):
-    [i, j, grid] = state
-    n = len(grid)
-    for pos in move_blank(i, j, n):
-        i1, j1 = pos
-        grid[i][j], grid[i1][j1] = grid[i1][j1], grid[i][j]
-        yield [i1, j1, grid]
-        grid[i][j], grid[i1][j1] = grid[i1][j1], grid[i][j]
+        finish = time.time()
 
+        total_time = finish - start
 
-def dfs_rec(path):
-    if is_goal(path[-1]):
-        return path
-    else:
-        for next_state in move(path[-1]):
-            if next_state not in path:
-                print("Next state is not in path... ", path)
-                next_path = path + [next_state]
-                solution = dfs_rec(next_path)
-                if solution is not None:
-                    return solution
-    return None
+        print("Time taken : " + str(total_time))
+
+        times.append(total_time)
+
+    print(times)
 
 
 if __name__ == '__main__':
-    # Starting state
-    state = [1, 1, [[2, 1, 6], [4, 0, 8], [7, 5, 3]]]
-
-    # Path = list of states[state, state]
-    print("Result : ", dfs_rec([state]))
+    part_1()
