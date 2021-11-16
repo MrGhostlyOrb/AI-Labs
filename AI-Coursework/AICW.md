@@ -22,4 +22,6 @@ To signal to the `move` function that a cyclic move is possible then a positive 
 
 ## Question 3
 
-###
+### Implementation
+
+In order to create a physical version of the problem that includes the modifications specified, it would need to take the form of a cylinder with 8 individually cured tiles that would wrap around it. This would then allow the tiles to be wrapped around the cylinder so they can be moved around individually and then the rows would also be able to be shifted vertically as per the specifications.
